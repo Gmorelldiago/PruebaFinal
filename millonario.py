@@ -8,7 +8,7 @@ def os_clear():
     os.system('cls')
 
 # Obtenme preguntas een opendtb
-def obtenme_preguntas(cantidad=10):
+def obtenme_preguntas(cantidad=15):
     url = f"https://opentdb.com/api.php?amount={cantidad}&type=multiple"
     try:
         respuesta = requests.get(url)
@@ -37,12 +37,13 @@ def juego_millonario():
     #Importante
     preguntas = obtenme_preguntas()
     puntos = 0
+    
 
     # Lista de comodines
     comodines = {
         ##'50%': True,
-        ##'saltar': True,
-        'público': True
+        'saltar': True,
+        ##'publico': True
 
 
     }
@@ -57,6 +58,7 @@ def juego_millonario():
             for comodin, disponible in comodines.items():
                 if disponible:
                     print(f"- {comodin}")
+        print("\nSi quieres plantarte y terminar el juego, escribe salir.")
 
         respuesta_usuario = input("Tu respuesta (1-4) o escribe el comodín: ").lower()
 
@@ -75,28 +77,36 @@ def juego_millonario():
 
             #respuesta_usuario = input("Tu respuesta (1-2): ").lower() 
 
-
-        #elif respuesta_usuario == 'saltar' and comodines['saltar']:
-         #   comodines['saltar'] = False
-          #  print("Has usado el comodín de saltar. Pasamos a la siguiente pregunta.\n")
-           # continue
-
-
-        if respuesta_usuario == 'público' and comodines['público']:
-            comodines['público'] = False
-            estadisticas = {opcion: random.randint(0, 100) for opcion in opciones}
-            estadisticas[pregunta['correct_answer']] += random.randint(10, 30)
-            total = sum(estadisticas.values())
-
-
-            for opcion in estadisticas:
-                estadisticas[opcion] = int((estadisticas[opcion] / total) * 100)
-            print("\nVeamos las votaciones del público: ")
+        if respuesta_usuario == 'salir':
+            os_clear()
+            print("Es un placer que hayas jugado a nuestro juego.\n")
+            print(f"Resultado: {puntos}\n")
             time.sleep(5)
+            break
+
+        elif respuesta_usuario == 'saltar' and comodines['saltar']:
+            comodines['saltar'] = False
+            print("Has usado el comodín de saltar. Pasemos a la siguiente pregunta, estate preparado, no tienes más oportunidades.\n")
+            time.sleep(5)
+            os_clear()
+            continue
+
+
+        #if respuesta_usuario == 'publico' and comodines['publico']:
+         #   comodines['público'] = False
+          #  estadisticas = {opcion: random.randint(0, 100) for opcion in opciones}
+           # estadisticas[pregunta['correct_answer']] += random.randint(10, 30)
+            #total = sum(estadisticas.values())
+
+
+            #for opcion in estadisticas:
+             #   estadisticas[opcion] = int((estadisticas[opcion] / total) * 100)
+            #print("\nVeamos las votaciones del público: ")
+            #time.sleep(5)
             
-            for opcion, porcentaje in estadisticas.items():
-                print(f"{opcion}: {porcentaje}%")
-            respuesta_usuario = input("Tu respuesta (1-4): ").lower()
+            #for opcion, porcentaje in estadisticas.items():
+             #   print(f"{opcion}: {porcentaje}%")
+            #respuesta_usuario = input("Tu respuesta (1-4): ").lower()
 
 
         try:
@@ -107,13 +117,23 @@ def juego_millonario():
                 time.sleep(5)
                 os_clear()
                 puntos += 1
+                if puntos == 15:
+                    print("Has ganado, eres el mejor macho")
+                    break
             else:
                 print(f"Incorrecto. La respuesta era: {pregunta['correct_answer']}")
+                time.sleep(5)
+                os_clear()
+                print(f"---------------Resultados finales----------------")
+                print(f"---------------PUNTOS: {puntos}----------------")
+                puntos == 0
+                time.sleep(5)
+                os_clear()
                 break
         except (ValueError, IndexError):
             print("Respuesta incorrecta. Fin del juego.")
             break
 
-    print(f"\nJuego terminado. {nombre}, obtuviste {puntos} puntos.")
+    print(f"\nJuego terminado. {nombre}")
 
 juego_millonario()
